@@ -60,8 +60,8 @@ class UnimplementedJournalService: JournalService {
             .eraseToAnyPublisher()
     }
     enum EndPoints {
-//        static let base = "http://localhost:8000/"
-        static let base = "https://2d09-145-224-104-27.ngrok-free.app/"
+        static let base = "http://localhost:8000/"
+//        static let base = "https://9262-145-224-103-183.ngrok-free.app/"
 
         case register
         case login
