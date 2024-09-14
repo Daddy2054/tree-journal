@@ -22,6 +22,9 @@ enum NetworkError: Error {
     case failedToDecodeResponse
     case invalidValue
 }
+enum EncodingError: Error {
+    case badFormat
+}
 
 enum SessionError: Error {
     case expired
@@ -206,7 +209,7 @@ class UnimplementedJournalService: JournalService {
             // 3.b Save the fetched trips to the cache to keep it updated
 
             tripCacheManager.saveTrips(trips)
-            print(trips)
+//            print(trips)
             return trips
         } catch {
 //            In case of a network error, return trips from the cache
@@ -245,7 +248,7 @@ class UnimplementedJournalService: JournalService {
             // 3.b Save the fetched trips to the cache to keep it updated
 
 //            tripCacheManager.saveTrips(trips)
-            print(trip)
+//            print(trip)
             return trip
         } catch {
 //            In case of a network error, return trips from the cache
@@ -315,21 +318,34 @@ class UnimplementedJournalService: JournalService {
         requestURL.addValue("Bearer \(token.accessToken)", forHTTPHeaderField: HTTPHeaders.authorization.rawValue)
         requestURL.addValue(MIMEType.JSON.rawValue, forHTTPHeaderField: HTTPHeaders.contentType.rawValue)
 
-        let dateFormatter = ISO8601DateFormatter()
-        dateFormatter.formatOptions = [.withInternetDateTime]
+//        let dateFormatter = ISO8601DateFormatter()
+//        dateFormatter.formatOptions = [.withInternetDateTime]
+//
+//
+//        let eventData: [String: Encodable] = [
+//            "name": request.name,
+//            "date": dateFormatter.string(from: request.date),
+//            "note": request.note  ,
+//            "trip_id": String(request.tripId),
+//            "location": request.location,
+//            "transition_from_previous":request.transitionFromPrevious,
+//        ]
+        
+//        let locationData: [String: Location?] = [
+//            "location": request.location ,
+//]
+//        print(isValidJSONObject(obj:eventData))
+//        requestURL.httpBody = try JSONSerialization.data(withJSONObject: eventData)
+//        let locationBody = try JSONSerialization.data(withJSONObject: locationData)
+//        let testRequest  = try JSONEncoder().encode(request)
 
-        let eventData: [String: Any] = [
-            "name": request.name,
-            "date": dateFormatter.string(from: request.date),
-            "note": request.note  as Any,
-            "trip_id": request.tripId,
-            "location":  request.location as Any,
-            "transition_from_previous":request.transitionFromPrevious as Any,
 
-        ]
-        print(eventData)
-        requestURL.httpBody = try JSONSerialization.data(withJSONObject: eventData)
+//        print(testRequest)
 
+        requestURL.httpBody  = try JSONEncoder().encode(request)
+//        print("jsonData: ", String(data: requestURL.httpBody!, encoding: .utf8) ?? "no body data")
+//        requestURL.httpBody?.append(locationBody)
+//        request.log()
         return try await performNetworkRequest(requestURL, responseType: Event.self)
     }
 
@@ -348,20 +364,21 @@ class UnimplementedJournalService: JournalService {
         requestURL.addValue("Bearer \(token.accessToken)", forHTTPHeaderField: HTTPHeaders.authorization.rawValue)
         requestURL.addValue(MIMEType.JSON.rawValue, forHTTPHeaderField: HTTPHeaders.contentType.rawValue)
 
-        let dateFormatter = ISO8601DateFormatter()
-        dateFormatter.formatOptions = [.withInternetDateTime]
-
-        let eventData: [String: Any] = [
-            "name": request.name,
-            "date": dateFormatter.string(from: request.date),
-            "note": request.note  as Any,
-            "location":  request.location as Any,
-            "transition_from_previous":request.transitionFromPrevious as Any,
-
-        
-        ]
-        requestURL.httpBody = try JSONSerialization.data(withJSONObject: eventData)
-
+//        let dateFormatter = ISO8601DateFormatter()
+//        dateFormatter.formatOptions = [.withInternetDateTime]
+//
+//        let eventData: [String: Any] = [
+//            "name": request.name,
+//            "date": dateFormatter.string(from: request.date),
+//            "note": request.note  as Any,
+////            "location":  request.location as Any,
+//            "transition_from_previous":request.transitionFromPrevious as Any,
+//
+//        
+//        ]
+//        print(eventData)
+//        requestURL.httpBody = try JSONSerialization.data(withJSONObject: eventData)
+        requestURL.httpBody  = try JSONEncoder().encode(request)
         return try await performNetworkRequest(requestURL, responseType: Event.self)
     }
 
@@ -383,37 +400,33 @@ class UnimplementedJournalService: JournalService {
     }
 
     func createMedia(with request: MediaCreate) async throws -> Media {
-        fatalError("Unimplemented createMedia")
-    }
+//        fatalError("Unimplemented createMedia")
+//    }
 //    func createEvent(with request: EventCreate) async throws -> Event {
 
-//        guard let token = token else {
-//            throw NetworkError.invalidValue
-//        }
-//
-//        var requestURL = URLRequest(url: EndPoints.media.url)
-//        requestURL.httpMethod = HTTPMethods.POST.rawValue
-//        requestURL.addValue(MIMEType.JSON.rawValue, forHTTPHeaderField: HTTPHeaders.accept.rawValue)
-//        requestURL.addValue("Bearer \(token.accessToken)", forHTTPHeaderField: HTTPHeaders.authorization.rawValue)
-//        requestURL.addValue(MIMEType.JSON.rawValue, forHTTPHeaderField: HTTPHeaders.contentType.rawValue)
-//
-//        let dateFormatter = ISO8601DateFormatter()
-//        dateFormatter.formatOptions = [.withInternetDateTime]
-//
-//        let eventData: [String: Any] = [
-//            "name": request.name,
-//            "date": dateFormatter.string(from: request.date),
-//            "note": request.note  as Any,
-//            "trip_id": request.tripId,
-//            "location":  request.location as Any,
-//            "transition_from_previous":request.transitionFromPrevious as Any,
-//
-//        ]
-//        print(eventData)
-//        requestURL.httpBody = try JSONSerialization.data(withJSONObject: eventData)
-//
-//        return try await performNetworkRequest(requestURL, responseType: Event.self)
-//    }
+        guard let token = token else {
+            throw NetworkError.invalidValue
+        }
+
+        var requestURL = URLRequest(url: EndPoints.media.url)
+        requestURL.httpMethod = HTTPMethods.POST.rawValue
+        requestURL.addValue(MIMEType.JSON.rawValue, forHTTPHeaderField: HTTPHeaders.accept.rawValue)
+        requestURL.addValue("Bearer \(token.accessToken)", forHTTPHeaderField: HTTPHeaders.authorization.rawValue)
+
+        requestURL.addValue(MIMEType.JSON.rawValue, forHTTPHeaderField: HTTPHeaders.contentType.rawValue)
+
+
+        let mediaData: [String: Any] = [
+            "caption": "image caption",
+            "event_id": request.eventId,
+            "base64_data": request.base64Data.base64EncodedString()
+
+        ]
+//        print(mediaData)
+        requestURL.httpBody = try JSONSerialization.data(withJSONObject: mediaData)
+
+        return try await performNetworkRequest(requestURL, responseType: Media.self)
+    }
 
 
     func deleteMedia(withId _: Media.ID) async throws {
@@ -445,10 +458,12 @@ class UnimplementedJournalService: JournalService {
     
     private func performNetworkRequest<T: Decodable>(_ request: URLRequest, responseType: T.Type) async throws -> T {
         let (data, response) = try await urlSession.data(for: request)
-
+//        request.log()
         guard let httpResponse = response as? HTTPURLResponse,
               httpResponse.statusCode == 200 else {
+            request.log()
             throw NetworkError.badResponse
+            
         }
 
         do {
@@ -474,5 +489,20 @@ class UnimplementedJournalService: JournalService {
             return false
         }
         return expirationDate <= Date()
+    }
+}
+
+extension Data {
+    func toString() -> String? {
+        return String(data: self, encoding: .utf8)
+    }
+}
+
+
+extension URLRequest {
+    func log() {
+        print("\(httpMethod ?? "") \(self)")
+        print("BODY \n \(String(describing: httpBody?.toString()))")
+        print("HEADERS \n \(String(describing: allHTTPHeaderFields))")
     }
 }

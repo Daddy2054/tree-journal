@@ -21,20 +21,33 @@ struct MediaCreate {
 }
 
 /// An object that can be used to create a new event.
-struct EventCreate {
+struct EventCreate: Sendable, Hashable, Codable  {
     let tripId: Trip.ID
     let name: String
     let note: String?
-    let date: Date
+//    let date: Date
+    let date: String
     let location: Location?
     let transitionFromPrevious: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case tripId = "trip_id"
+        case name, note, date, location
+        case transitionFromPrevious = "transition_from_previous"
+    }
 }
 
 /// An object that can be used to update an existing event.
-struct EventUpdate {
+struct EventUpdate: Sendable, Hashable, Codable {
     var name: String
     var note: String?
-    var date: Date
+//    var date: Date
+    let date: String
     var location: Location?
     var transitionFromPrevious: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case name, note, date, location
+        case transitionFromPrevious = "transition_from_previous"
+    }
 }

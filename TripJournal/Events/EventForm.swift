@@ -49,7 +49,7 @@ struct EventForm: View {
     private let mode: Mode
     private let updateHandler: () -> Void
     private let title: String
-
+    
     @State private var name: String = ""
     @State private var note: String?
     @State private var date: Date = .now
@@ -224,13 +224,16 @@ struct EventForm: View {
 
     private func addEvent() async {
         isLoading = true
+        let dateFormatter = ISO8601DateFormatter()
+        dateFormatter.formatOptions = [.withInternetDateTime]
+
         do {
             try validateForm()
             let request = EventCreate(
                 tripId: tripId,
                 name: name,
                 note: note?.nonEmpty,
-                date: date,
+                date: dateFormatter.string(from: date),
                 location: location,
                 transitionFromPrevious: transitionFromPrevious?.nonEmpty
             )
@@ -247,12 +250,15 @@ struct EventForm: View {
 
     private func editEvent(withId id: Event.ID) async {
         isLoading = true
+        let dateFormatter = ISO8601DateFormatter()
+        dateFormatter.formatOptions = [.withInternetDateTime]
+
         do {
             try validateForm()
             let request = EventUpdate(
                 name: name,
                 note: note?.nonEmpty,
-                date: date,
+                date: dateFormatter.string(from: date),
                 location: location,
                 transitionFromPrevious: transitionFromPrevious?.nonEmpty
             )

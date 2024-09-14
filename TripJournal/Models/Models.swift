@@ -67,6 +67,9 @@ struct Location: Sendable, Hashable, Codable  {
     var coordinate: CLLocationCoordinate2D {
         return .init(latitude: latitude, longitude: longitude)
     }
+    enum CodingKeys: String, CodingKey {
+        case latitude, longitude, address
+    }
 }
 
 /// Represents a media with a URL.
